@@ -1,4 +1,4 @@
-package com.hackfrenzy.partify
+package com.hackfrenzy.tracker
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

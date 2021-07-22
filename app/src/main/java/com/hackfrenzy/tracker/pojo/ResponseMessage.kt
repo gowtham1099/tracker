@@ -1,4 +1,4 @@
-package com.hackfrenzy.partify.pojo
+package com.hackfrenzy.tracker.pojo
 
 import com.google.gson.annotations.SerializedName
 

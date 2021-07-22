@@ -1,4 +1,4 @@
-package com.hackfrenzy.partify
+package com.hackfrenzy.tracker
 
 import org.junit.Test
 

@@ -1,26 +1,22 @@
-package com.hackfrenzy.partify
+package com.hackfrenzy.tracker
 
 import android.annotation.SuppressLint
-import android.app.Notification
-import android.app.PendingIntent
-import android.app.Service
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import android.widget.Button
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.work.*
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import com.hackfrenzy.partify.service.BackgroundService
-import com.hackfrenzy.partify.viewmodel.OrderTrackingViewModel
-import java.util.concurrent.TimeUnit
-import java.util.jar.Manifest
+import com.hackfrenzy.tracker.service.BackgroundService
+import com.hackfrenzy.tracker.viewmodel.OrderTrackingViewModel
 
 class Tracking : AppCompatActivity() {
 
@@ -35,10 +31,9 @@ class Tracking : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        startTrip("121")
     }
 
-    private fun startTrip(id: String) {
+    fun startTrip(id: String) {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
             locationRequest = LocationRequest.create()
@@ -54,7 +49,28 @@ class Tracking : AppCompatActivity() {
     }
 
     fun stopTrip(orderId: String) {
+        val viewModel = ViewModelProvider(this).get(OrderTrackingViewModel::class.java)
+        viewModel.setStopTrip(orderId)
 
+        viewModel.getStopTripStatus().observe(this, {t->
+            if (t.message.equals("success", true)){
+                Log.e("Tracking", "Stopped")
+            }
+        })
+        stopService(Intent(this, BackgroundService::class.java))
+    }
+
+    fun startTracking(orderId: String){
+        Handler().postDelayed(Runnable {
+            val viewModel = ViewModelProvider(this).get(OrderTrackingViewModel::class.java)
+            viewModel.setStartTracking(orderId)
+
+            viewModel.getStartTrackingStatus().observe(this, {t->
+                if (t.message.equals("success", true)){
+                    Log.e("Tracking", "Started  ${t.data}")
+                }
+            })
+        }, 500)
     }
 
 
@@ -105,7 +121,11 @@ class Tracking : AppCompatActivity() {
     }
 
     private fun startTripTracking() {
-        startService(Intent(this, BackgroundService::class.java))
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            startForegroundService(Intent(this, BackgroundService::class.java))
+        }else{
+            startService(Intent(this, BackgroundService::class.java))
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -115,7 +135,7 @@ class Tracking : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 123){
-
+            getCurrentLocationAddress()
         }
     }
 

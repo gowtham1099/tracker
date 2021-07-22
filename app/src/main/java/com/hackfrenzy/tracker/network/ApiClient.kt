@@ -1,4 +1,4 @@
-package com.hackfrenzy.partify.network
+package com.hackfrenzy.tracker.network
 
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient

@@ -1,6 +1,6 @@
-package com.hackfrenzy.partify.network
+package com.hackfrenzy.tracker.network
 
-import com.hackfrenzy.partify.pojo.ResponseMessage
+import com.hackfrenzy.tracker.pojo.ResponseMessage
 import retrofit2.http.*
 
 interface Api {

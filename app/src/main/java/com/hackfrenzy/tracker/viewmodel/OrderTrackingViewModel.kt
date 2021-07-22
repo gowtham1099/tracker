@@ -1,11 +1,11 @@
-package com.hackfrenzy.partify.viewmodel
+package com.hackfrenzy.tracker.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hackfrenzy.partify.network.ApiClient
-import com.hackfrenzy.partify.pojo.ResponseMessage
+import com.hackfrenzy.tracker.network.ApiClient
+import com.hackfrenzy.tracker.pojo.ResponseMessage
 import kotlinx.coroutines.launch
 
 class OrderTrackingViewModel : ViewModel() {
@@ -26,16 +26,6 @@ class OrderTrackingViewModel : ViewModel() {
         return startTrip
     }
 
-    fun setUpdate(id: String, data: HashMap<String, String>) {
-        viewModelScope.launch {
-            val response = ApiClient.getClient.update(id, data)
-            update.postValue(response)
-        }
-    }
-
-    fun getSUpdateStatus(): LiveData<ResponseMessage> {
-        return update
-    }
 
     fun setStartTracking(id: String) {
         viewModelScope.launch {
